@@ -1,20 +1,28 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Observer;
 
 use Exception;
-use \Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\QuoteFactory;
-use Mondu\Mondu\Helpers\ContextHelper;
-use Mondu\Mondu\Helpers\Logger\Logger as MonduFileLogger;
-use Mondu\Mondu\Helpers\OrderHelper;
-use Magento\Sales\Model\Order;
-use Mondu\Mondu\Helpers\MonduTransactionItem;
-use Mondu\Mondu\Helpers\PaymentMethod;
+use Mondu\Mondu\Helper\ContextHelper;
+use Mondu\Mondu\Helper\Log;
+use Mondu\Mondu\Helper\MonduTransactionItem;
+use Mondu\Mondu\Helper\OrderHelper;
+use Mondu\Mondu\Helper\PaymentMethod;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
+use Psr\Log\LoggerInterface;
 
-class CreateOrder extends MonduObserver
+class CreateOrder extends AbstractMonduObserver
 {
     /**
      * @var string
@@ -24,27 +32,22 @@ class CreateOrder extends MonduObserver
     /**
      * @var CheckoutSession
      */
-    private $_checkoutSession;
+    private $checkoutSession;
 
     /**
      * @var RequestFactory
      */
-    private $_requestFactory;
+    private $requestFactory;
 
     /**
-     * @var \Mondu\Mondu\Helpers\Log
+     * @var Log
      */
-    private $_monduLogger;
+    private $monduLogger;
 
     /**
      * @var QuoteFactory
      */
     private $quoteFactory;
-
-    /**
-     * @var MonduFileLogger
-     */
-    private $monduFileLogger;
 
     /**
      * @var PaymentMethod
@@ -62,38 +65,37 @@ class CreateOrder extends MonduObserver
     private $monduTransactionItem;
 
     /**
+     * @param PaymentMethod $paymentMethodHelper
+     * @param LoggerInterface $logger
      * @param ContextHelper $contextHelper
      * @param CheckoutSession $checkoutSession
      * @param RequestFactory $requestFactory
-     * @param \Mondu\Mondu\Helpers\Log $logger
+     * @param Log $monduLogger
      * @param QuoteFactory $quoteFactory
      * @param OrderHelper $orderHelper
-     * @param MonduFileLogger $monduFileLogger
-     * @param PaymentMethod $paymentMethodHelper
      * @param MonduTransactionItem $monduTransactionItem
      */
     public function __construct(
-        ContextHelper $contextHelper,
-        CheckoutSession $checkoutSession,
-        RequestFactory $requestFactory,
-        \Mondu\Mondu\Helpers\Log $logger,
-        QuoteFactory $quoteFactory,
-        OrderHelper $orderHelper,
-        MonduFileLogger $monduFileLogger,
-        PaymentMethod $paymentMethodHelper,
+        PaymentMethod        $paymentMethodHelper,
+        LoggerInterface      $logger,
+        ContextHelper        $contextHelper,
+        CheckoutSession      $checkoutSession,
+        RequestFactory       $requestFactory,
+        Log                  $monduLogger,
+        QuoteFactory         $quoteFactory,
+        OrderHelper          $orderHelper,
         MonduTransactionItem $monduTransactionItem
     ) {
         parent::__construct(
             $paymentMethodHelper,
-            $monduFileLogger,
+            $logger,
             $contextHelper
         );
-        $this->_checkoutSession = $checkoutSession;
-        $this->_requestFactory = $requestFactory;
-        $this->_monduLogger = $logger;
+        $this->checkoutSession = $checkoutSession;
+        $this->requestFactory = $requestFactory;
         $this->quoteFactory = $quoteFactory;
         $this->orderHelper = $orderHelper;
-        $this->monduFileLogger = $monduFileLogger;
+        $this->monduLogger = $monduLogger;
         $this->paymentMethodHelper = $paymentMethodHelper;
         $this->monduTransactionItem = $monduTransactionItem;
     }
@@ -105,9 +107,9 @@ class CreateOrder extends MonduObserver
      * @return void
      * @throws LocalizedException
      */
-    public function _execute(Observer $observer)
+    public function executeMondu(Observer $observer): void
     {
-        $orderUid = $this->_checkoutSession->getMonduid();
+        $orderUid = $this->checkoutSession->getMonduid();
         $order = $observer->getEvent()->getOrder();
         $payment = $order->getPayment();
         $createMonduDatabaseRecord = true;
@@ -121,12 +123,12 @@ class CreateOrder extends MonduObserver
         }
 
         if (!$isMondu) {
-            $this->monduFileLogger->info('Not a Mondu order, skipping', ['orderNumber' => $order->getIncrementId()]);
+            $this->logger->info('Not a Mondu order, skipping', ['orderNumber' => $order->getIncrementId()]);
             return;
         }
 
         if ($isEditOrder) {
-            $this->monduFileLogger
+            $this->logger
                 ->info(
                     'Order has parent id, adjusting order in Mondu. ',
                     ['orderNumber' => $order->getIncrementId()]
@@ -137,10 +139,10 @@ class CreateOrder extends MonduObserver
         }
 
         try {
-            $this->monduFileLogger
+            $this->logger
                 ->info('Validating order status in Mondu. ', ['orderNumber' => $order->getIncrementId()]);
 
-            $orderData = $this->_requestFactory->create(RequestFactory::TRANSACTION_CONFIRM_METHOD)
+            $orderData = $this->requestFactory->create(RequestFactory::TRANSACTION_CONFIRM_METHOD)
                 ->setValidate(true)
                 ->process(['orderUid' => $orderUid]);
 
@@ -151,19 +153,19 @@ class CreateOrder extends MonduObserver
             $order->setData('mondu_reference_id', $orderUid);
             $order->addStatusHistoryComment(__('Mondu: order id %1', $orderData['uuid']));
             $order->save();
-            $this->monduFileLogger->info('Saved the order in Magento ', ['orderNumber' => $order->getIncrementId()]);
+            $this->logger->info('Saved the order in Magento ', ['orderNumber' => $order->getIncrementId()]);
 
             if ($createMonduDatabaseRecord) {
-                $this->_monduLogger
+                $this->monduLogger
                     ->logTransaction($order, $orderData, null, $this->paymentMethodHelper->getCode($payment));
             } else {
-                $transactionId = $this->_monduLogger->updateLogMonduData($orderUid, null, null, null, $order->getId());
+                $transactionId = $this->monduLogger->updateLogMonduData($orderUid, null, null, null, $order->getId());
 
                 $this->monduTransactionItem->deleteRecords($transactionId);
                 $this->monduTransactionItem->createTransactionItemsForOrder($transactionId, $order);
             }
         } catch (Exception $e) {
-            $this->monduFileLogger->info('Error in CreateOrder observer', ['orderNumber' => $order->getIncrementId()]);
+            $this->logger->info('Error in CreateOrder observer', ['orderNumber' => $order->getIncrementId()]);
             throw new LocalizedException(__($e->getMessage()));
         }
     }
@@ -177,7 +179,7 @@ class CreateOrder extends MonduObserver
     protected function confirmAuthorizedOrder($orderData, $orderNumber)
     {
         if ($orderData['state'] === 'authorized') {
-            $authorizationData = $this->_requestFactory->create(RequestFactory::CONFIRM_ORDER)
+            $authorizationData = $this->requestFactory->create(RequestFactory::CONFIRM_ORDER)
                 ->process(['orderUid' => $orderData['uuid'], 'referenceId' => $orderNumber]);
             return $authorizationData['order'];
         }

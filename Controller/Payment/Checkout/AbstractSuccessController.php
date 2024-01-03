@@ -1,20 +1,32 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Controller\Payment\Checkout;
 
+use Exception;
+use Magento\Checkout\Helper\Data as CheckoutData;
 use Magento\Checkout\Model\Session;
+use Magento\Checkout\Model\Type\Onepage;
+use Magento\Customer\Model\Group;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
-use Magento\Checkout\Helper\Data as CheckoutData;
-use Magento\Quote\Api\CartManagementInterface;
-use Mondu\Mondu\Helpers\ABTesting\ABTesting;
-use Mondu\Mondu\Helpers\Logger\Logger as MonduFileLogger;
+use Mondu\Mondu\Helper\ABTesting\ABTesting;
+use Mondu\Mondu\Helper\Logger\Logger as MonduFileLogger;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
 
 abstract class AbstractSuccessController extends AbstractPaymentController
@@ -93,7 +105,7 @@ abstract class AbstractSuccessController extends AbstractPaymentController
      * @param string $referenceId
      * @return mixed
      * @throws LocalizedException
-     * @throws \Exception
+     * @throws Exception
      */
     protected function authorizeMonduOrder($monduId, $referenceId)
     {
@@ -118,7 +130,7 @@ abstract class AbstractSuccessController extends AbstractPaymentController
         $quote->setCustomerId(null)
             ->setCustomerEmail($email)
             ->setCustomerIsGuest(true)
-            ->setCustomerGroupId(\Magento\Customer\Model\Group::NOT_LOGGED_IN_ID);
+            ->setCustomerGroupId(Group::NOT_LOGGED_IN_ID);
 
         return $quote;
     }
@@ -128,20 +140,20 @@ abstract class AbstractSuccessController extends AbstractPaymentController
      *
      * @return string
      * @throws LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
     protected function getCheckoutMethod()
     {
         $quote = $this->checkoutSession->getQuote();
 
         if ($this->customerSession->isLoggedIn()) {
-            return \Magento\Checkout\Model\Type\Onepage::METHOD_CUSTOMER;
+            return Onepage::METHOD_CUSTOMER;
         }
         if (!$quote->getCheckoutMethod()) {
             if ($this->checkoutData->isAllowedGuestCheckout($quote)) {
-                $quote->setCheckoutMethod(\Magento\Checkout\Model\Type\Onepage::METHOD_GUEST);
+                $quote->setCheckoutMethod(Onepage::METHOD_GUEST);
             } else {
-                $quote->setCheckoutMethod(\Magento\Checkout\Model\Type\Onepage::METHOD_REGISTER);
+                $quote->setCheckoutMethod(Onepage::METHOD_REGISTER);
             }
         }
         return $quote->getCheckoutMethod();
@@ -156,7 +168,7 @@ abstract class AbstractSuccessController extends AbstractPaymentController
      */
     protected function placeOrder($quote)
     {
-        if ($this->getCheckoutMethod() == \Magento\Checkout\Model\Type\Onepage::METHOD_GUEST) {
+        if ($this->getCheckoutMethod() == Onepage::METHOD_GUEST) {
             $this->prepareGuestQuote($quote);
         }
 
@@ -170,7 +182,7 @@ abstract class AbstractSuccessController extends AbstractPaymentController
      *
      * @param Quote $quote
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getExternalReferenceId(Quote $quote)
     {

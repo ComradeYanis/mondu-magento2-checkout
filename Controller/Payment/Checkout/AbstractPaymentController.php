@@ -1,16 +1,26 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Controller\Payment\Checkout;
 
+use Exception;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
-use Mondu\Mondu\Helpers\ABTesting\ABTesting;
-use Mondu\Mondu\Helpers\Logger\Logger as MonduFileLogger;
+use Mondu\Mondu\Helper\ABTesting\ABTesting;
+use Mondu\Mondu\Helper\Logger\Logger as MonduFileLogger;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
 
 abstract class AbstractPaymentController implements ActionInterface
@@ -60,7 +70,7 @@ abstract class AbstractPaymentController implements ActionInterface
     /**
      * Execute
      *
-     * @return ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @return ResponseInterface|ResultInterface
      */
     abstract public function execute();
 
@@ -112,11 +122,11 @@ abstract class AbstractPaymentController implements ActionInterface
     /**
      * Process exceptions
      *
-     * @param \Exception $e
+     * @param Exception $e
      * @param string $message
      * @return ResponseInterface
      */
-    protected function processException(\Exception $e, $message)
+    protected function processException(Exception $e, $message)
     {
         $this->messageManager->addExceptionMessage($e, __($message));
         return $this->redirect('checkout/cart');

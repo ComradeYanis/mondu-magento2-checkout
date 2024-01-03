@@ -1,15 +1,26 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model\Request;
 
-use \Magento\Framework\HTTP\Client\Curl;
-use \Magento\Quote\Model\Cart\CartTotalRepository;
-use \Magento\Checkout\Model\Session as CheckoutSession;
-use \Magento\Quote\Model\Quote;
-use Mondu\Mondu\Helpers\BuyerParams\BuyerParamsInterface;
-use Mondu\Mondu\Helpers\OrderHelper;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
-use Magento\Framework\UrlInterface;
+use Exception;
+use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\Locale\Resolver;
+use Magento\Framework\UrlInterface;
+use Magento\Quote\Model\Cart\CartTotalRepository;
+use Magento\Quote\Model\Quote;
+use Mondu\Mondu\Helper\BuyerParams\BuyerParamsInterface;
+use Mondu\Mondu\Helper\OrderHelper;
+use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class Transactions extends CommonRequest implements RequestInterface
 {
@@ -128,7 +139,7 @@ class Transactions extends CommonRequest implements RequestInterface
                     'message' => __('Success')
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'error' => 1,
                 'body' => null,
@@ -141,8 +152,8 @@ class Transactions extends CommonRequest implements RequestInterface
      * Get Request Params from
      *
      * @return array
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     protected function getRequestParams()
     {

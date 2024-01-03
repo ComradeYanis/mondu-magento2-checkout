@@ -1,15 +1,23 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
+use Magento\Config\Model\ResourceModel\Config as ResourceConfig;
+use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\UrlInterface;
-use Mondu\Mondu\Gateway\Http\Client\ClientMock;
-use Magento\Config\Model\ResourceModel\Config as ResourceConfig;
-use Magento\Framework\App\Config\Storage\WriterInterface;
-use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Store\Model\ScopeInterface;
+use Mondu\Mondu\Gateway\Http\Client\ClientMock;
 
 class ConfigProvider implements ConfigProviderInterface
 {

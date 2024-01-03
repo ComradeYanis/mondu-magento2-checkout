@@ -1,9 +1,17 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Cron;
 
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
-use Mondu\Mondu\Helpers\BulkActions;
+use Mondu\Mondu\Helper\BulkActions;
 use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class Cron

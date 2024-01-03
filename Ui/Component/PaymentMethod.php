@@ -1,49 +1,46 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Ui\Component;
 
-use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 
 class PaymentMethod extends Column
 {
     /**
-     * @var UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
-     * @var mixed|string
-     */
-    private $viewUrl;
-    /**
-     * @var \Mondu\Mondu\Helpers\PaymentMethod
+     * @var \Mondu\Mondu\Helper\PaymentMethod
      */
     private $paymentMethodHelper;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
-     * @param UrlInterface $backendUrl
-     * @param \Mondu\Mondu\Helpers\PaymentMethod $paymentMethodHelper
-     * @param string $viewUrl
+     * @param \Mondu\Mondu\Helper\PaymentMethod $paymentMethodHelper
      * @param array $components
      * @param array $data
      */
     public function __construct(
-        ContextInterface $context,
-        UiComponentFactory $uiComponentFactory,
-        UrlInterface $backendUrl,
-        \Mondu\Mondu\Helpers\PaymentMethod $paymentMethodHelper,
-        $viewUrl = '',
-        array $components = [],
-        array $data = []
+        ContextInterface                   $context,
+        UiComponentFactory                 $uiComponentFactory,
+        \Mondu\Mondu\Helper\PaymentMethod $paymentMethodHelper,
+        array                              $components = [],
+        array                              $data = []
     ) {
-        $this->urlBuilder = $backendUrl;
-        $this->viewUrl    = $viewUrl;
+        parent::__construct(
+            $context,
+            $uiComponentFactory,
+            $components,
+            $data
+        );
         $this->paymentMethodHelper = $paymentMethodHelper;
-        parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
     /**

@@ -1,3 +1,9 @@
+<!--
+  Copyright (c) 2024.
+  wot2304@gmail.com
+  Yanis Yeltsyn
+  -->
+
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="mondu_transactions" resource="default" engine="innodb">
         <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Log id"/>
@@ -33,6 +39,13 @@
             <column name="entity_id"/>
         </constraint>
     </table>
+
+    <!-- TODO: not the best practice to overload magento`s tables + they could be modified and all data will be lost
+                So will need to think about moving the data to the separate extension attribute table (`sales_order_mondu_order_id`)
+                Magento\Sales\Model\Order class is working with extension_attributes
+    -->
+    <!-- TODO: think about perspective of moving the column to the extension attiributes -->
+    <!-- TODO: after moving will need to done SQL request for migration all the data mondu_reference_id + order_id -->
 
     <table name="sales_order" resource="sales">
         <column xsi:type="varchar" name="mondu_reference_id" nullable="false" comment="Mondu Reference id" />

@@ -1,10 +1,19 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Model\Method\Factory;
 use Magento\Store\Model\StoreResolver;
-use Mondu\Mondu\Helpers\PaymentMethod;
+use Mondu\Mondu\Helper\PaymentMethod;
+use Mondu\Mondu\Model\Payment\Mondu;
 
 class PaymentMethodList
 {
@@ -16,7 +25,7 @@ class PaymentMethodList
     private $methodFactory;
 
     /**
-     * @var \Mondu\Mondu\Model\Payment\Mondu[]
+     * @var Mondu[]
      */
     private $paymentMethods = [];
 
@@ -55,7 +64,7 @@ class PaymentMethodList
     public function getPaymentMethod($method)
     {
         if (!isset($this->paymentMethods[$method])) {
-            $this->paymentMethods[$method] = $this->methodFactory->create(\Mondu\Mondu\Model\Payment\Mondu::class)
+            $this->paymentMethods[$method] = $this->methodFactory->create(Mondu::class)
                 ->setCode($method);
         }
 

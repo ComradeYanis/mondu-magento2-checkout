@@ -1,10 +1,22 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Controller\Adminhtml\Bulk;
 
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Exception\LocalizedException;
 
+/**
+ * @todo remove. Have no sence. The trait for what? It could be just realized in a class.
+ *      Trait for trait is not best practise.
+ */
 trait BulkActionHelpers
 {
     /**

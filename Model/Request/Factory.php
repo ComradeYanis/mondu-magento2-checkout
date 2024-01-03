@@ -1,11 +1,20 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model\Request;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
-use Mondu\Mondu\Helpers\HeadersHelper;
-use Mondu\Mondu\Helpers\Logger\Logger;
-use Mondu\Mondu\Helpers\ModuleHelper;
+use Mondu\Mondu\Helper\HeadersHelper;
+use Mondu\Mondu\Helper\Logger\Logger;
+use Mondu\Mondu\Helper\ModuleHelper;
+use Mondu\Mondu\Model\Request\Webhooks\Keys;
 
 class Factory
 {
@@ -41,19 +50,19 @@ class Factory
      * @var string[]
      */
     private $invokableClasses = [
-        self::TRANSACTIONS_REQUEST_METHOD => \Mondu\Mondu\Model\Request\Transactions::class,
-        self::TRANSACTION_CONFIRM_METHOD => \Mondu\Mondu\Model\Request\Confirm::class,
-        self::SHIP_ORDER => \Mondu\Mondu\Model\Request\Ship::class,
-        self::CANCEL => \Mondu\Mondu\Model\Request\Cancel::class,
-        self::MEMO => \Mondu\Mondu\Model\Request\Memo::class,
-        self::WEBHOOKS_KEYS_REQUEST_METHOD => \Mondu\Mondu\Model\Request\Webhooks\Keys::class,
-        self::WEBHOOKS_REQUEST_METHOD => \Mondu\Mondu\Model\Request\Webhooks::class,
-        self::ADJUST_ORDER => \Mondu\Mondu\Model\Request\Adjust::class,
-        self::EDIT_ORDER => \Mondu\Mondu\Model\Request\Edit::class,
-        self::PAYMENT_METHODS => \Mondu\Mondu\Model\Request\PaymentMethods::class,
-        self::ORDER_INVOICES => \Mondu\Mondu\Model\Request\OrderInvoices::class,
-        self::ERROR_EVENTS => \Mondu\Mondu\Model\Request\ErrorEvents::class,
-        self::CONFIRM_ORDER => \Mondu\Mondu\Model\Request\ConfirmOrder::class
+        self::TRANSACTIONS_REQUEST_METHOD => Transactions::class,
+        self::TRANSACTION_CONFIRM_METHOD => Confirm::class,
+        self::SHIP_ORDER => Ship::class,
+        self::CANCEL => Cancel::class,
+        self::MEMO => Memo::class,
+        self::WEBHOOKS_KEYS_REQUEST_METHOD => Keys::class,
+        self::WEBHOOKS_REQUEST_METHOD => Webhooks::class,
+        self::ADJUST_ORDER => Adjust::class,
+        self::EDIT_ORDER => Edit::class,
+        self::PAYMENT_METHODS => PaymentMethods::class,
+        self::ORDER_INVOICES => OrderInvoices::class,
+        self::ERROR_EVENTS => ErrorEvents::class,
+        self::CONFIRM_ORDER => ConfirmOrder::class
     ];
 
     /**

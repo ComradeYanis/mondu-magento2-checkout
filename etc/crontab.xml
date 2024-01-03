@@ -1,4 +1,10 @@
 <?xml version="1.0" ?>
+<!--
+  Copyright (c) 2024.
+  wot2304@gmail.com
+  Yanis Yeltsyn
+  -->
+
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="default">
         <job instance="Mondu\Mondu\Cron\Cron" method="execute" name="mondu_cron_test">

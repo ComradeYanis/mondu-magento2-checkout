@@ -1,8 +1,15 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Model\Request;
 
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\Client\Curl;
 use Mondu\Mondu\Model\Ui\ConfigProvider;
 

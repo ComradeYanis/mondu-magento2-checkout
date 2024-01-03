@@ -1,7 +1,16 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model\ResourceModel\MonduTransactionItem;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Mondu\Mondu\Model\ResourceModel\MonduTransactionItem;
 
 class Collection extends AbstractCollection
 {
@@ -29,7 +38,7 @@ class Collection extends AbstractCollection
     {
         $this->_init(
             \Mondu\Mondu\Model\MonduTransactionItem::class,
-            \Mondu\Mondu\Model\ResourceModel\MonduTransactionItem::class
+            MonduTransactionItem::class
         );
     }
 }

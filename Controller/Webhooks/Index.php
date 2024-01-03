@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Controller\Webhooks;
 
 use Exception;
@@ -9,9 +17,10 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\AuthorizationException;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Webapi\Response;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
-use Mondu\Mondu\Helpers\Log;
+use Mondu\Mondu\Helper\Log;
 use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class Index extends Action implements ActionInterface
@@ -73,7 +82,7 @@ class Index extends Action implements ActionInterface
     public function execute()
     {
         $resBody = [];
-        $resStatus = \Magento\Framework\Webapi\Response::HTTP_OK;
+        $resStatus = Response::HTTP_OK;
 
         try {
             $content = $this->getRequest()->getContent();

@@ -1,4 +1,5 @@
 .DS_Store
+.github
 
 # Magento authentication file
 auth.json

@@ -1,10 +1,20 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Model\Payment;
 
 use Magento\Payment\Model\InfoInterface;
+use Magento\Payment\Model\Method\AbstractMethod;
+use Magento\Store\Model\ScopeInterface;
 
-class MonduSepa extends \Magento\Payment\Model\Method\AbstractMethod
+class MonduSepa extends AbstractMethod
 {
     public const PAYMENT_METHOD_MONDU_CODE = 'mondusepa';
 
@@ -49,9 +59,9 @@ class MonduSepa extends \Magento\Payment\Model\Method\AbstractMethod
 
         $path = 'payment/' . 'mondu' . '/' . 'specificcountry';
         $availableCountries = $this->_scopeConfig
-            ->getValue($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+            ->getValue($path, ScopeInterface::SCOPE_STORE, $storeId);
         $allowSpecific = $this->_scopeConfig
-            ->getValue('payment/mondu/allowspecific', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+            ->getValue('payment/mondu/allowspecific', ScopeInterface::SCOPE_STORE, $storeId);
 
         if ($allowSpecific == 1) {
             $availableCountries = explode(',', $availableCountries);

@@ -1,9 +1,16 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Controller\Payment\Checkout;
 
 use Magento\Framework\Webapi\Response;
-use Mondu\Mondu\Helpers\ABTesting\ABTesting;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
 
 class Token extends AbstractPaymentController

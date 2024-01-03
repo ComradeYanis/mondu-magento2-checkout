@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+  Copyright (c) 2024.
+  wot2304@gmail.com
+  Yanis Yeltsyn
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Mondu\Mondu\Block\Adminhtml\Memo">
+        <arguments>
+            <argument name="logger" xsi:type="object">Mondu\Mondu\Logger\Logger</argument>
+        </arguments>
+    </type>
+</config>

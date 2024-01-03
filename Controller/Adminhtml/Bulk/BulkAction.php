@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Controller\Adminhtml\Bulk;
 
@@ -6,8 +14,8 @@ use Magento\Backend\App\Action;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
 use Magento\Ui\Component\MassAction\Filter;
-use Mondu\Mondu\Helpers\BulkActions;
-use Mondu\Mondu\Helpers\Logger\Logger;
+use Mondu\Mondu\Helper\BulkActions;
+use Mondu\Mondu\Helper\Logger\Logger;
 
 abstract class BulkAction extends Action
 {

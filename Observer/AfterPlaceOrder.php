@@ -1,32 +1,45 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
-use Mondu\Mondu\Helpers\ContextHelper;
-use Mondu\Mondu\Helpers\Logger\Logger;
-use Mondu\Mondu\Helpers\PaymentMethod;
+use Mondu\Mondu\Helper\ContextHelper;
+use Mondu\Mondu\Helper\Log;
+use Mondu\Mondu\Helper\PaymentMethod;
+use Psr\Log\LoggerInterface;
 
-class AfterPlaceOrder extends MonduObserver
+class AfterPlaceOrder extends AbstractMonduObserver
 {
     /**
-     * @var \Mondu\Mondu\Helpers\Log
+     * @var Log
      */
     protected $monduLogger;
 
     /**
      * @param PaymentMethod $paymentMethodHelper
-     * @param Logger $monduFileLogger
+     * @param LoggerInterface $logger
      * @param ContextHelper $contextHelper
-     * @param \Mondu\Mondu\Helpers\Log $monduLogger
+     * @param Log $monduLogger
      */
     public function __construct(
-        PaymentMethod $paymentMethodHelper,
-        Logger $monduFileLogger,
-        ContextHelper $contextHelper,
-        \Mondu\Mondu\Helpers\Log $monduLogger
+        PaymentMethod   $paymentMethodHelper,
+        LoggerInterface $logger,
+        ContextHelper   $contextHelper,
+        Log             $monduLogger
     ) {
-        parent::__construct($paymentMethodHelper, $monduFileLogger, $contextHelper);
+        parent::__construct(
+            $paymentMethodHelper,
+            $logger,
+            $contextHelper
+        );
         $this->monduLogger = $monduLogger;
     }
 
@@ -36,11 +49,13 @@ class AfterPlaceOrder extends MonduObserver
      * @param Observer $observer
      * @return void
      */
-    public function _execute(Observer $observer)
+    public function executeMondu(Observer $observer): void
     {
         $order = $observer->getEvent()->getOrder();
         $monduUuid = $order->getMonduReferenceId();
         $orderData = $this->monduLogger->getTransactionByOrderUid($monduUuid);
+        $order->setState(Order::STATE_PROCESSING);
+        $order->setStatus(Order::STATE_PROCESSING);
 
         if (isset($orderData['mondu_state']) && $orderData['mondu_state'] === 'pending') {
             $order->addStatusHistoryComment(
@@ -48,11 +63,7 @@ class AfterPlaceOrder extends MonduObserver
             );
             $order->setState(Order::STATE_PAYMENT_REVIEW);
             $order->setStatus(Order::STATE_PAYMENT_REVIEW);
-            $order->save();
-        } else {
-            $order->setState(Order::STATE_PROCESSING);
-            $order->setStatus(Order::STATE_PROCESSING);
-            $order->save();
         }
+        $order->save();
     }
 }

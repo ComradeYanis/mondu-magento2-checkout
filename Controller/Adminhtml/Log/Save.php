@@ -1,15 +1,24 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Controller\Adminhtml\Log;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\LocalizedException;
-
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
-use Mondu\Mondu\Helpers\Log;
+use Mondu\Mondu\Helper\Log;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
 
 class Save extends Action
@@ -61,9 +70,9 @@ class Save extends Action
      * Save action
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @return \Magento\Framework\Controller\ResultInterface
+     * @return ResultInterface
      * @throws LocalizedException
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute()
     {

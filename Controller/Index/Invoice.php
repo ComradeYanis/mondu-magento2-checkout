@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Controller\Index;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -7,8 +15,8 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\Sales\Model\Order\Pdf\Invoice as PdfInvoiceModel;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order\Pdf\Invoice as PdfInvoiceModel;
 use Zend_Pdf_Exception;
 
 class Invoice implements ActionInterface

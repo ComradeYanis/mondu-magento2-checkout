@@ -1,10 +1,18 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Controller\Payment\Checkout;
 
+use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\Quote\Model\Quote;
 
 class Success extends AbstractSuccessController
 {
@@ -46,7 +54,7 @@ class Success extends AbstractSuccessController
 
         } catch (LocalizedException $e) {
             return $this->processException($e, 'Mondu: An error occurred while trying to confirm the order');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->processException($e, 'Mondu: Error during the order process');
         }
     }

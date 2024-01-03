@@ -1,7 +1,16 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model\ResourceModel\Log;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Mondu\Mondu\Model\ResourceModel\Log;
 
 class Collection extends AbstractCollection
 {
@@ -27,6 +36,6 @@ class Collection extends AbstractCollection
      */
     protected function _construct()
     {
-        $this->_init(\Mondu\Mondu\Model\Log::class, \Mondu\Mondu\Model\ResourceModel\Log::class);
+        $this->_init(\Mondu\Mondu\Model\Log::class, Log::class);
     }
 }

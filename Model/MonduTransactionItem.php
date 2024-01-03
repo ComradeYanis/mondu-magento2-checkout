@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
@@ -29,7 +37,7 @@ class MonduTransactionItem extends AbstractModel implements IdentityInterface
      */
     protected function _construct()
     {
-        $this->_init(\Mondu\Mondu\Model\ResourceModel\MonduTransactionItem::class);
+        $this->_init(ResourceModel\MonduTransactionItem::class);
     }
 
     /**

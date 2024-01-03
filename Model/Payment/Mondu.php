@@ -1,10 +1,19 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 
 namespace Mondu\Mondu\Model\Payment;
 
 use Magento\Payment\Model\InfoInterface;
+use Magento\Payment\Model\Method\AbstractMethod;
 
-class Mondu extends \Magento\Payment\Model\Method\AbstractMethod
+class Mondu extends AbstractMethod
 {
     public const PAYMENT_METHOD_MONDU_CODE = 'mondu';
 

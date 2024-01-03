@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Block\Log\Edit;
 
 use Magento\Framework\AuthorizationInterface;
@@ -36,7 +44,7 @@ class GenericButton implements ButtonProviderInterface
      */
     public function getId(): int
     {
-        return (int)$this->context->getRequestParams('entity_id');
+        return (int)$this->context->getRequestParam('entity_id');
     }
 
     /**

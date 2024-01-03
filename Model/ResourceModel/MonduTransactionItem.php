@@ -1,9 +1,18 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Model\ResourceModel;
 
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
-class MonduTransactionItem extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
+class MonduTransactionItem extends AbstractDb
 {
     /**
      * Construct

@@ -1,12 +1,18 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
 
 namespace Mondu\Mondu\Ui\Component;
 
 use Magento\Framework\UrlInterface;
-use Magento\Framework\Url;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 
 class Actions extends Column
 {
@@ -16,28 +22,20 @@ class Actions extends Column
     private $urlBuilder;
 
     /**
-     * @var mixed|string
-     */
-    private $viewUrl;
-
-    /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
      * @param UrlInterface $backendUrl
-     * @param string $viewUrl
      * @param array $components
      * @param array $data
      */
     public function __construct(
-        ContextInterface $context,
+        ContextInterface   $context,
         UiComponentFactory $uiComponentFactory,
-        UrlInterface $backendUrl,
-        $viewUrl = '',
-        array $components = [],
-        array $data = []
+        UrlInterface       $backendUrl,
+        array              $components = [],
+        array              $data = []
     ) {
         $this->urlBuilder = $backendUrl;
-        $this->viewUrl    = $viewUrl;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
@@ -50,7 +48,7 @@ class Actions extends Column
     public function prepareDataSource(array $dataSource)
     {
         if (isset($dataSource['data']['items'])) {
-            foreach ($dataSource['data']['items'] as & $item) {
+            foreach ($dataSource['data']['items'] as &$item) {
                 // here we can also use the data from $item to configure some parameters of an action URL
                 $item[$this->getData('name')] = [
                     'adjust' => [

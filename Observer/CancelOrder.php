@@ -1,16 +1,24 @@
 <?php
+/**
+ * Copyright (c) 2024.
+ * wot2304@gmail.com
+ * Yanis Yeltsyn
+ */
+
+declare(strict_types=1);
+
 namespace Mondu\Mondu\Observer;
 
-use Magento\Framework\Event\Observer;
 use Exception;
-use \Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
-use Mondu\Mondu\Helpers\ContextHelper;
-use Mondu\Mondu\Helpers\Logger\Logger as MonduFileLogger;
-use Mondu\Mondu\Helpers\PaymentMethod;
+use Mondu\Mondu\Helper\ContextHelper;
+use Mondu\Mondu\Helper\PaymentMethod;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
+use Psr\Log\LoggerInterface;
 
-class CancelOrder extends MonduObserver
+class CancelOrder extends AbstractMonduObserver
 {
     /**
      * @var string
@@ -23,36 +31,30 @@ class CancelOrder extends MonduObserver
     private $requestFactory;
 
     /**
-     * @var MonduFileLogger
-     */
-    private $monduFileLogger;
-
-    /**
      * @var ManagerInterface
      */
     private $messageManager;
 
     /**
      * @param PaymentMethod $paymentMethodHelper
-     * @param MonduFileLogger $monduFileLogger
+     * @param LoggerInterface $logger
      * @param ContextHelper $contextHelper
      * @param RequestFactory $requestFactory
      * @param ManagerInterface $messageManager
      */
     public function __construct(
-        PaymentMethod $paymentMethodHelper,
-        MonduFileLogger $monduFileLogger,
-        ContextHelper $contextHelper,
-        RequestFactory $requestFactory,
+        PaymentMethod    $paymentMethodHelper,
+        LoggerInterface  $logger,
+        ContextHelper    $contextHelper,
+        RequestFactory   $requestFactory,
         ManagerInterface $messageManager
     ) {
         parent::__construct(
             $paymentMethodHelper,
-            $monduFileLogger,
+            $logger,
             $contextHelper
         );
 
-        $this->monduFileLogger = $monduFileLogger;
         $this->requestFactory = $requestFactory;
         $this->messageManager = $messageManager;
     }
@@ -64,14 +66,14 @@ class CancelOrder extends MonduObserver
      * @return void
      * @throws LocalizedException
      */
-    public function _execute(Observer $observer)
+    public function executeMondu(Observer $observer): void
     {
         $order = $observer->getEvent()->getOrder();
         $monduId = $order->getData('mondu_reference_id');
 
         try {
             if (!$order->getRelationChildId()) {
-                $this->monduFileLogger->info('Trying to cancel Order '.$order->getIncrementId());
+                $this->logger->info('Trying to cancel Order '.$order->getIncrementId());
 
                 $cancelData = $this->requestFactory->create(RequestFactory::CANCEL)
                     ->process(['orderUid' => $monduId]);
@@ -88,10 +90,10 @@ class CancelOrder extends MonduObserver
                     __('Mondu: The order with the id %1 was successfully canceled.', $monduId)
                 );
                 $order->save();
-                $this->monduFileLogger->info('Cancelled order ', ['orderNumber' => $order->getIncrementId()]);
+                $this->logger->info('Cancelled order ', ['orderNumber' => $order->getIncrementId()]);
             }
         } catch (Exception $error) {
-            $this->monduFileLogger
+            $this->logger
                 ->info('Failed to cancel Order '.$order->getIncrementId(), ['e' => $error->getMessage()]);
             throw new LocalizedException(__($error->getMessage()));
         }
