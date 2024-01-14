@@ -10,12 +10,12 @@ declare(strict_types=1);
 
 namespace Mondu\Mondu\Logger;
 
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class Logger extends \Monolog\Logger
 {
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $monduConfig;
 
@@ -25,13 +25,13 @@ class Logger extends \Monolog\Logger
     protected $fallbackName = "MONDU";
 
     /**
-     * @param ConfigProvider $monduConfig
+     * @param MonduConfigProvider $monduConfig
      * @param string $name
      * @param array $handlers
      * @param array $processors
      */
     public function __construct(
-        ConfigProvider $monduConfig,
+        MonduConfigProvider $monduConfig,
         $name,
         array $handlers = [],
         array $processors = []

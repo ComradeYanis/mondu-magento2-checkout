@@ -12,9 +12,9 @@ namespace Mondu\Mondu\Model\Request\Webhooks;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\Client\Curl;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 use Mondu\Mondu\Model\Request\CommonRequest;
 use Mondu\Mondu\Model\Request\RequestInterface;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class Keys extends CommonRequest implements RequestInterface
 {
@@ -24,7 +24,7 @@ class Keys extends CommonRequest implements RequestInterface
     protected $curl;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     protected $configProvider;
 
@@ -45,10 +45,12 @@ class Keys extends CommonRequest implements RequestInterface
 
     /**
      * @param Curl $curl
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      */
-    public function __construct(Curl $curl, ConfigProvider $configProvider)
-    {
+    public function __construct(
+        Curl $curl,
+        MonduConfigProvider $configProvider
+    ) {
         $this->curl = $curl;
         $this->configProvider = $configProvider;
     }
@@ -91,6 +93,8 @@ class Keys extends CommonRequest implements RequestInterface
     }
 
     /**
+     *
+     * REMOVE NOT NEEDED SINGLE METHOD
      * Update
      *
      * @return $this

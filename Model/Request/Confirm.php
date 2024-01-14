@@ -12,7 +12,7 @@ namespace Mondu\Mondu\Model\Request;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class Confirm extends CommonRequest
 {
@@ -23,7 +23,7 @@ class Confirm extends CommonRequest
      */
     protected $curl;
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $configProvider;
     /**
@@ -33,11 +33,11 @@ class Confirm extends CommonRequest
 
     /**
      * @param Curl $curl
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      */
     public function __construct(
         Curl $curl,
-        ConfigProvider $configProvider
+        MonduConfigProvider $configProvider
     ) {
         $this->configProvider = $configProvider;
         $this->curl = $curl;

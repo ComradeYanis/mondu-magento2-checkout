@@ -11,25 +11,27 @@ declare(strict_types=1);
 namespace Mondu\Mondu\Helper;
 
 use Magento\Sales\Model\Order;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class ContextHelper
 {
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $configProvider;
 
     /**
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      */
     public function __construct(
-        ConfigProvider $configProvider
+        MonduConfigProvider $configProvider
     ) {
         $this->configProvider = $configProvider;
     }
 
     /**
+     *
+     * @todo REMOVE
      * Sets context depending on store of the order
      *
      * @param Order $order

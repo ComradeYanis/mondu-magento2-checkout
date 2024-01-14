@@ -15,13 +15,13 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 use Mondu\Mondu\Helper\Log as MonduLogger;
 use Mondu\Mondu\Helper\Logger\Logger as MonduFileLogger;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class InvoiceOrderHelper
 {
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $configProvider;
     /**
@@ -55,7 +55,7 @@ class InvoiceOrderHelper
     private $monduTransactionItem;
 
     /**
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      * @param RequestFactory $requestFactory
      * @param Log $monduLogger
      * @param OrderHelper $orderHelper
@@ -64,7 +64,7 @@ class InvoiceOrderHelper
      * @param MonduTransactionItem $monduTransactionitem
      */
     public function __construct(
-        ConfigProvider $configProvider,
+        MonduConfigProvider $configProvider,
         RequestFactory $requestFactory,
         MonduLogger $monduLogger,
         OrderHelper $orderHelper,

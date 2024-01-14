@@ -16,9 +16,9 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 use Mondu\Mondu\Model\LogFactory;
 use Mondu\Mondu\Model\Request\Factory;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class Log extends AbstractHelper
 {
@@ -28,7 +28,7 @@ class Log extends AbstractHelper
     protected $_logger;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $_configProvider;
 
@@ -55,7 +55,7 @@ class Log extends AbstractHelper
     /**
      * @param LogFactory $monduLogger
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      * @param Factory $requestFactory
      * @param OrderRepositoryInterface $orderRepository
      * @param MonduTransactionItem $monduTransactionItem
@@ -63,7 +63,7 @@ class Log extends AbstractHelper
     public function __construct(
         LogFactory $monduLogger,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        ConfigProvider $configProvider,
+        MonduConfigProvider $configProvider,
         Factory $requestFactory,
         OrderRepositoryInterface $orderRepository,
         MonduTransactionItem $monduTransactionItem

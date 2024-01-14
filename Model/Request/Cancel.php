@@ -7,11 +7,10 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Model\Request;
 
 use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class Cancel extends CommonRequest implements RequestInterface
 {
@@ -21,17 +20,17 @@ class Cancel extends CommonRequest implements RequestInterface
     protected $curl;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $configProvider;
 
     /**
      * @param Curl $curl
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      */
     public function __construct(
         Curl $curl,
-        ConfigProvider $configProvider
+        MonduConfigProvider $configProvider
     ) {
         $this->configProvider = $configProvider;
         $this->curl = $curl;

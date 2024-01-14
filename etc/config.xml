@@ -18,6 +18,11 @@
                 <title>Pay later via bank transfer</title>
                 <description></description>
                 <sandbox>1</sandbox>
+                <is_sandbox></is_sandbox>
+                <sandbox_url>https://api.demo.mondu.ai/api/v1</sandbox_url>
+                <production_url>https://api.mondu.ai/api/v1</production_url>
+                <sandbox_sdk_url>https://checkout.demo.mondu.ai/widget.js</sandbox_sdk_url>
+                <sdk_url>https://checkout.mondu.ai/widget.js</sdk_url>
                 <cron>0</cron>
                 <allowspecific>1</allowspecific>
                 <specificcountry>DE</specificcountry>

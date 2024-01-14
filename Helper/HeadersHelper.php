@@ -7,11 +7,10 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Helper;
 
 use Exception;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class HeadersHelper
 {
@@ -21,17 +20,17 @@ class HeadersHelper
     private $moduleHelper;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $configProvider;
 
     /**
      * @param ModuleHelper $moduleHelper
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      */
     public function __construct(
         ModuleHelper $moduleHelper,
-        ConfigProvider $configProvider
+        MonduConfigProvider $configProvider
     ) {
         $this->moduleHelper = $moduleHelper;
         $this->configProvider = $configProvider;

@@ -20,7 +20,7 @@ use Magento\Quote\Model\Cart\CartTotalRepository;
 use Magento\Quote\Model\Quote;
 use Mondu\Mondu\Helper\BuyerParams\BuyerParamsInterface;
 use Mondu\Mondu\Helper\OrderHelper;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class Transactions extends CommonRequest implements RequestInterface
 {
@@ -35,9 +35,9 @@ class Transactions extends CommonRequest implements RequestInterface
     protected $_cartTotalRepository;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
-    protected $_configProvider;
+    private $configProvider;
 
     /**
      * @var Curl
@@ -73,7 +73,7 @@ class Transactions extends CommonRequest implements RequestInterface
      * @param Curl $curl
      * @param CartTotalRepository $cartTotalRepository
      * @param CheckoutSession $checkoutSession
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      * @param OrderHelper $orderHelper
      * @param UrlInterface $urlBuilder
      * @param BuyerParamsInterface $buyerParams
@@ -82,7 +82,7 @@ class Transactions extends CommonRequest implements RequestInterface
         Curl $curl,
         CartTotalRepository $cartTotalRepository,
         CheckoutSession $checkoutSession,
-        ConfigProvider $configProvider,
+        MonduConfigProvider $configProvider,
         OrderHelper $orderHelper,
         UrlInterface $urlBuilder,
         BuyerParamsInterface $buyerParams,
@@ -90,7 +90,7 @@ class Transactions extends CommonRequest implements RequestInterface
     ) {
         $this->_checkoutSession = $checkoutSession;
         $this->_cartTotalRepository = $cartTotalRepository;
-        $this->_configProvider = $configProvider;
+        $this->configProvider = $configProvider;
         $this->curl = $curl;
         $this->orderHelper = $orderHelper;
         $this->urlBuilder = $urlBuilder;
@@ -112,13 +112,13 @@ class Transactions extends CommonRequest implements RequestInterface
             }
             $params = $this->getRequestParams();
 
-            if (in_array( $_params['payment_method'], array('direct_debit', 'installment', 'installment_by_invoice'))) {
+            if (in_array($_params['payment_method'], ['direct_debit', 'installment', 'installment_by_invoice'])) {
                 $params['payment_method'] = $_params['payment_method'];
             }
 
             $params = json_encode($params);
 
-            $url = $this->_configProvider->getApiUrl('orders');
+            $url = $this->configProvider->getApiUrl('orders');
 
             $this->curl->addHeader('X-Mondu-User-Agent', $_params['user-agent']);
 
@@ -174,7 +174,7 @@ class Transactions extends CommonRequest implements RequestInterface
         $order = [
             'language' => $language,
             'currency' => $quote->getBaseCurrencyCode(),
-            'state_flow' => ConfigProvider::AUTHORIZATION_STATE_FLOW,
+            'state_flow' => MonduConfigProvider::AUTHORIZATION_STATE_FLOW,
             'success_url' => $successUrl,
             'cancel_url' => $cancelUrl,
             'declined_url' => $declinedUrl,

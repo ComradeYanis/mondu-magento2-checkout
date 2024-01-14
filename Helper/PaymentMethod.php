@@ -15,20 +15,34 @@ use Mondu\Mondu\Model\Request\Factory;
 
 class PaymentMethod
 {
-    public const PAYMENTS = ['mondu', 'mondusepa', 'monduinstallment', 'monduinstallmentbyinvoice'];
+    public const PAYMENT_MONDU_CACHE = 'mondu_payment_methods';
+    public const PAYMENT_MONDU = 'mondu';
+    public const PAYMENT_MONDUSEPA = 'mondusepa';
+    public const PAYMENT_MONDUINSTALLMENT = 'monduinstallment';
+    public const PAYMENT_MONDUINSTALLMENTBYINVOICE = 'monduinstallmentbyinvoice';
+    public const PAYMENTS = [
+        self::PAYMENT_MONDU,
+        self::PAYMENT_MONDUSEPA,
+        self::PAYMENT_MONDUINSTALLMENT,
+        self::PAYMENT_MONDUINSTALLMENTBYINVOICE
+    ];
+    public const LABEL_MONDU = 'Rechnungskauf';
+    public const LABEL_MONDUSEPA = 'SEPA Direct Debit';
+    public const LABEL_MONDUINSTALLMENT = 'Installment';
+    public const LABEL_MONDUINSTALLMENTBYINVOICE = 'Installment By Invoice';
 
     public const LABELS = [
-        'mondu' => 'Rechnungskauf',
-        'mondusepa' => 'SEPA Direct Debit',
-        'monduinstallment' => 'Installment',
-        'monduinstallmentbyinvoice' => 'Installment By Invoice'
+        self::PAYMENT_MONDU => self::LABEL_MONDU,
+        self::PAYMENT_MONDUSEPA => self::PAYMENT_MONDUSEPA,
+        self::PAYMENT_MONDUINSTALLMENT => self::LABEL_MONDUINSTALLMENT,
+        self::PAYMENT_MONDUINSTALLMENTBYINVOICE => self::PAYMENT_MONDUINSTALLMENTBYINVOICE
     ];
 
     public const MAPPING = [
-        'invoice' => 'mondu',
-        'direct_debit' => 'mondusepa',
-        'installment' => 'monduinstallment',
-        'installment_by_invoice' => 'monduinstallmentbyinvoice'
+        'invoice' => self::PAYMENT_MONDU,
+        'direct_debit' => self::PAYMENT_MONDUSEPA,
+        'installment' => self::PAYMENT_MONDUINSTALLMENT,
+        'installment_by_invoice' => self::PAYMENT_MONDUINSTALLMENTBYINVOICE
     ];
     /**
      * @var Factory
@@ -70,21 +84,20 @@ class PaymentMethod
      */
     public function getAllowed($storeId = null)
     {
+        $result = [];
         try {
-            if ($result = $this->cache->load('mondu_payment_methods_'.$storeId)) {
-                return json_decode($result, true);
+            if ($cacheResult = $this->cache->load(self::PAYMENT_MONDU_CACHE . "_{$storeId}")) {
+                return json_decode($cacheResult, true);
             }
             $paymentMethods = $this->requestFactory->create(Factory::PAYMENT_METHODS)->process();
-            $result = [];
             foreach ($paymentMethods as $value) {
                 $result[] = self::MAPPING[$value['identifier']] ?? '';
             }
-            $this->cache->save(json_encode($result), 'mondu_payment_methods_'.$storeId, [], 3600);
-            return $result;
         } catch (Exception $e) {
-            $this->cache->save(json_encode([]), 'mondu_payment_methods_'.$storeId, [], 3600);
-            return [];
+            //TODO: add logs
         }
+        $this->cache->save(json_encode($result), self::PAYMENT_MONDU_CACHE . "_{$storeId}", [], 3600);
+        return $result;
     }
 
     /**
@@ -94,7 +107,7 @@ class PaymentMethod
      */
     public function resetAllowedCache()
     {
-        $this->cache->remove('mondu_payment_methods');
+        $this->cache->remove(self::PAYMENT_MONDU_CACHE);
     }
 
     /**

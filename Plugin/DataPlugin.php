@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Mondu\Mondu\Helper;
+namespace Mondu\Mondu\Plugin;
 
 use Magento\Payment\Helper\Data;
+use Mondu\Mondu\Model\Config\GlobalConfigProvider;
 use Mondu\Mondu\Model\PaymentMethodList;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class DataPlugin
 {
@@ -21,17 +21,17 @@ class DataPlugin
     private $paymentMethodList;
 
     /**
-     * @var ConfigProvider
+     * @var GlobalConfigProvider
      */
     private $configProvider;
 
     /**
      * @param PaymentMethodList $paymentMethodList
-     * @param ConfigProvider $configProvider
+     * @param GlobalConfigProvider $configProvider
      */
     public function __construct(
         PaymentMethodList $paymentMethodList,
-        ConfigProvider $configProvider
+        GlobalConfigProvider $configProvider
     ) {
         $this->paymentMethodList = $paymentMethodList;
         $this->configProvider = $configProvider;
@@ -46,23 +46,10 @@ class DataPlugin
      */
     public function afterGetPaymentMethods(Data $subject, $result)
     {
-        if (!$this->configProvider->isActive()) {
+        if ($this->configProvider->getIsAnyConfigProviderActive() === false) {
             return $result;
         }
 
         return $this->paymentMethodList->filterMonduPaymentMethods($result);
-    }
-
-    /**
-     * AroundGetMethodInstance
-     *
-     * @param Data $subject
-     * @param callable $proceed
-     * @param mixed $code
-     * @return mixed
-     */
-    public function aroundGetMethodInstance(Data $subject, callable $proceed, $code)
-    {
-        return $proceed($code);
     }
 }

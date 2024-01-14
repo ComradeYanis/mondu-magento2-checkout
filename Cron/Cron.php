@@ -12,7 +12,7 @@ namespace Mondu\Mondu\Cron;
 
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
 use Mondu\Mondu\Helper\BulkActions;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class Cron
 {
@@ -23,7 +23,7 @@ class Cron
     private $orderCollectionFactory;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $configProvider;
 
@@ -35,12 +35,12 @@ class Cron
     /**
      * @param OrderCollectionFactory $orderCollectionFactory
      * @param BulkActions $bulkActions
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      */
     public function __construct(
         OrderCollectionFactory $orderCollectionFactory,
         BulkActions $bulkActions,
-        ConfigProvider $configProvider
+        MonduConfigProvider $configProvider
     ) {
         $this->orderCollectionFactory = $orderCollectionFactory;
         $this->bulkActions = $bulkActions;

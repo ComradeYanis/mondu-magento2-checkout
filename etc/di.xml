@@ -44,7 +44,7 @@
     </virtualType>
 
     <type name="Magento\Payment\Helper\Data">
-        <plugin sortOrder="10" name="monduPaymentData" type="Mondu\Mondu\Helper\DataPlugin"/>
+        <plugin sortOrder="10" name="monduPaymentData" type="Mondu\Mondu\Plugin\DataPlugin"/>
     </type>
     <type name="Magento\Framework\App\Request\CsrfValidator">
         <plugin name="csrf_validator_skip" type="Mondu\Mondu\Helper\CsrfValidatorSkip"/>

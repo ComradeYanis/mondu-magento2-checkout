@@ -19,6 +19,9 @@ use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Mondu\Mondu\Gateway\Http\Client\ClientMock;
 
+/**
+ * @deprecated use MonduConfigProvider instead of
+ */
 class ConfigProvider implements ConfigProviderInterface
 {
     public const CODE = 'mondu';

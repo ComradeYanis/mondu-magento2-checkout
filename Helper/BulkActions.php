@@ -7,72 +7,63 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Helper;
 
 use Exception;
+use InvalidArgumentException;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
-use Mondu\Mondu\Helper\Log as MonduLogs;
 use Mondu\Mondu\Helper\Logger\Logger;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
 
+/**
+ * Class BulkActions
+ * @package Mondu\Mondu\Helper
+ */
 class BulkActions
 {
     public const BULK_SHIP_ACTION = 'bulkShipAction';
     public const BULK_SYNC_ACTION = 'bulkSyncAction';
+    protected const EXECUTE_BULK_SHIP_ACTION = 'bulkShipAction';
+    protected const EXECUTE_BULK_SYNC_ACTION = 'bulkSyncAction';
+    protected const EXECUTE_BULK_SHIP = 'bulkShip';
+    protected const EXECUTE_SHIP_ORDER_WITHOUT_INVOICES = 'shipOrderWithoutInvoices';
 
     /**
-     * @var OrderCollectionFactory
+     * @var array
      */
+    protected static $methodMap = [
+        self::EXECUTE_BULK_SHIP_ACTION => true,
+        self::EXECUTE_BULK_SYNC_ACTION => true,
+        self::EXECUTE_BULK_SHIP => true,
+        self::EXECUTE_SHIP_ORDER_WITHOUT_INVOICES => true,
+    ];
+
     private $orderCollectionFactory;
-
-    /**
-     * @var Log
-     */
     private $monduLogs;
-
-    /**
-     * @var RequestFactory
-     */
     private $requestFactory;
-
-    /**
-     * @var ConfigProvider
-     */
     private $configProvider;
-
-    /**
-     * @var Logger\Logger
-     */
     private $monduFileLogger;
-
-    /**
-     * @var OrderHelper
-     */
     private $orderHelper;
-
-    /**
-     * @var InvoiceOrderHelper
-     */
     private $invoiceOrderHelper;
 
     /**
+     * BulkActions constructor.
+     *
      * @param OrderCollectionFactory $orderCollectionFactory
      * @param Log $monduLogs
      * @param RequestFactory $requestFactory
-     * @param ConfigProvider $configProvider
-     * @param Logger\Logger $monduFileLogger
+     * @param MonduConfigProvider $configProvider
+     * @param Logger $monduFileLogger
      * @param OrderHelper $orderHelper
      * @param InvoiceOrderHelper $invoiceOrderHelper
      */
     public function __construct(
         OrderCollectionFactory $orderCollectionFactory,
-        MonduLogs $monduLogs,
+        Log $monduLogs,
         RequestFactory $requestFactory,
-        ConfigProvider $configProvider,
+        MonduConfigProvider $configProvider,
         Logger $monduFileLogger,
         OrderHelper $orderHelper,
         InvoiceOrderHelper $invoiceOrderHelper
@@ -87,8 +78,6 @@ class BulkActions
     }
 
     /**
-     * PrepareData
-     *
      * @param array $orderIds
      * @return array[]
      */
@@ -114,18 +103,19 @@ class BulkActions
     }
 
     /**
-     * Execute
-     *
      * @param array $orderIds
      * @param string $method
      * @param null|array $additionalData
      * @return array
      */
-    public function execute($orderIds, $method, $additionalData = null)
+    public function execute(array $orderIds, string $method, ?array $additionalData = null): array
     {
-        [ $monduOrders, $notMonduOrders ] = $this->prepareData($orderIds);
+        if (!isset(self::$methodMap[$method])) {
+            throw new InvalidArgumentException("Unknown method: {$method}");
+        }
         $failedAttempts = [];
         $successAttempts = [];
+        [ $monduOrders, $notMonduOrders ] = $this->prepareData($orderIds);
 
         foreach ($monduOrders as $order) {
             try {
@@ -139,11 +129,10 @@ class BulkActions
     }
 
     /**
-     * BulkSyncAction
-     *
      * @param Order $order
      * @param null|array $_additionalData
      * @return float|string|null
+     * @throws LocalizedException
      */
     private function bulkSyncAction($order, $_additionalData)
     {

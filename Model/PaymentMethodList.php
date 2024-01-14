@@ -74,7 +74,7 @@ class PaymentMethodList
     /**
      * FilterMonduPaymentMethods
      *
-     * @param string $methods
+     * @param array $methods
      * @return array
      */
     public function filterMonduPaymentMethods($methods)

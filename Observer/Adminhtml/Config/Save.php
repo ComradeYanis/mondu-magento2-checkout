@@ -14,11 +14,11 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Mondu\Mondu\Helper\PaymentMethod;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 /**
-* @todo Add logger
+ * @todo Add logger
  */
 class Save implements ObserverInterface
 {
@@ -28,7 +28,7 @@ class Save implements ObserverInterface
     private $requestFactory;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $monduConfig;
     /**
@@ -47,12 +47,12 @@ class Save implements ObserverInterface
 
     /**
      * @param RequestFactory $requestFactory
-     * @param ConfigProvider $monduConfig
+     * @param MonduConfigProvider $monduConfig
      * @param PaymentMethod $paymentMethod
      */
     public function __construct(
         RequestFactory $requestFactory,
-        ConfigProvider $monduConfig,
+        MonduConfigProvider $monduConfig,
         PaymentMethod $paymentMethod
     ) {
         $this->requestFactory = $requestFactory;

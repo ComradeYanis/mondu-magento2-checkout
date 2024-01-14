@@ -21,7 +21,7 @@ use Magento\Framework\Webapi\Response;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 use Mondu\Mondu\Helper\Log;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
 class Index extends Action implements ActionInterface
 {
@@ -46,7 +46,7 @@ class Index extends Action implements ActionInterface
     private $_monduLogger;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $_monduConfig;
 
@@ -56,7 +56,7 @@ class Index extends Action implements ActionInterface
      * @param Json $json
      * @param OrderFactory $orderFactory
      * @param Log $logger
-     * @param ConfigProvider $monduConfig
+     * @param MonduConfigProvider $monduConfig
      */
     public function __construct(
         Context $context,
@@ -64,7 +64,7 @@ class Index extends Action implements ActionInterface
         Json $json,
         OrderFactory $orderFactory,
         Log $logger,
-        ConfigProvider $monduConfig
+        MonduConfigProvider $monduConfig
     ) {
         parent::__construct($context);
         $this->_jsonFactory = $jsonFactory;

@@ -18,8 +18,8 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Sales\Model\Order;
 use Mondu\Mondu\Helper\AdditionalCosts\AdditionalCostsInterface;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 use Mondu\Mondu\Model\Request\Factory as RequestFactory;
-use Mondu\Mondu\Model\Ui\ConfigProvider;
 
 class OrderHelper
 {
@@ -39,7 +39,7 @@ class OrderHelper
     private $_requestFactory;
 
     /**
-     * @var ConfigProvider
+     * @var MonduConfigProvider
      */
     private $configProvider;
 
@@ -57,7 +57,7 @@ class OrderHelper
      * @param QuoteFactory $quoteFactory
      * @param Log $logger
      * @param RequestFactory $requestFactory
-     * @param ConfigProvider $configProvider
+     * @param MonduConfigProvider $configProvider
      * @param CartTotalRepository $cartTotalRepository
      * @param AdditionalCostsInterface $additionalCosts
      */
@@ -65,7 +65,7 @@ class OrderHelper
         QuoteFactory             $quoteFactory,
         Log                      $logger,
         RequestFactory           $requestFactory,
-        ConfigProvider           $configProvider,
+        MonduConfigProvider           $configProvider,
         CartTotalRepository      $cartTotalRepository,
         AdditionalCostsInterface $additionalCosts
     ) {
@@ -237,7 +237,7 @@ class OrderHelper
      */
     public function addLinesOrGrossAmountToOrder(Quote $quote, $grandTotal, $order, $isAdjustment = false)
     {
-        $sendLines = $this->configProvider->sendLines();
+        $sendLines = $this->configProvider->isSendLines();
         if ($sendLines) {
             $order['lines'] = $this->getLinesFromQuote($quote, $isAdjustment);
         }
@@ -276,7 +276,7 @@ class OrderHelper
      */
     public function addLineItemsToInvoice($invoiceItem, $invoice, $externalReferenceIdMapping = [])
     {
-        $sendLines = $this->configProvider->sendLines();
+        $sendLines = $this->configProvider->isSendLines();
 
         if ($sendLines) {
             $quoteItems = $invoiceItem->getAllItems();
