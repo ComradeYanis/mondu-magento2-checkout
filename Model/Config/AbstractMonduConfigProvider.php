@@ -35,6 +35,8 @@ class AbstractMonduConfigProvider implements MonduConfigProviderInterface
     public const PAYMENT_MONDU_SANDBOX_WEBHOOK_SECRET = 'payment/mondu/sandbox_webhook_secret';
     public const PAYMENT_MONDU_SEND_LINES = 'payment/mondu/send_lines';
     public const PAYMENT_MONDU_REQUIRE_INVOICE = 'payment/mondu/require_invoice';
+    public const PAYMENT_MONDU_ALLOW_SPECIFIC = 'payment/mondu/allowspecific';
+    public const PAYMENT_MONDU_SPECIFIC_COUNTRY = 'payment/mondu/specificcountry';
 
 
     //REVIEW

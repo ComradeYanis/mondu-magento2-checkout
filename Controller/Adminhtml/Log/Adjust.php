@@ -54,14 +54,4 @@ class Adjust extends Action
 
         return $resultPage;
     }
-
-    /**
-     * Is the user allowed to view the page.
-     *
-     * @return bool
-     */
-    protected function _isAllowed()
-    {
-        return $this->_authorization->isAllowed(static::ADMIN_RESOURCE);
-    }
 }

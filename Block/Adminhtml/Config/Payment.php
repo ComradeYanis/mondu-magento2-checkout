@@ -7,45 +7,13 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Block\Adminhtml\Config;
 
-use Magento\Backend\Block\Context;
-use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Block\System\Config\Form\Fieldset;
-use Magento\Config\Model\Config;
 use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\View\Helper\Js;
 
 class Payment extends Fieldset
 {
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @param Context            $context
-     * @param Session            $authSession
-     * @param Js                 $jsHelper
-     * @param Config             $config
-     * @param array              $data
-     */
-    public function __construct(
-        Context $context,
-        Session $authSession,
-        Js $jsHelper,
-        Config $config,
-        array $data = []
-    ) {
-        parent::__construct(
-            $context,
-            $authSession,
-            $jsHelper,
-            $data
-        );
-        $this->config = $config;
-    }
 
     /**
      * Add custom css class

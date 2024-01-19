@@ -7,7 +7,6 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Cron;
 
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
@@ -55,15 +54,23 @@ class Cron
     public function execute(): Cron
     {
         if ($this->configProvider->isCronEnabled()) {
-            $date = date('Y-m-d H:i:s', strtotime('-1 hour'));
-            $result = $this->orderCollectionFactory->create()
-                ->addAttributeToFilter('updated_at', [ 'from' => $date ])
-                ->addAttributeToFilter('mondu_reference_id', ['neq' => null]);
-
-            $orders = $result->getAllIds();
-
-            $this->bulkActions->execute($orders, BulkActions::BULK_SHIP_ACTION);
+            $this->executeBulkShipAction();
         }
         return $this;
+    }
+
+    /**
+     * @return void
+     */
+    private function executeBulkShipAction(): void
+    {
+        $date = date('Y-m-d H:i:s', strtotime('-1 hour'));
+        $orders = $this->orderCollectionFactory->create()
+            ->addAttributeToFilter('updated_at', [ 'from' => $date ])
+            ->addAttributeToFilter('mondu_reference_id', ['neq' => null]);
+
+        $orderIds = $orders->getAllIds();
+
+        $this->bulkActions->execute($orderIds, BulkActions::BULK_SHIP_ACTION);
     }
 }

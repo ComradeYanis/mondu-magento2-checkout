@@ -13,8 +13,9 @@ use Exception;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\HTTP\ClientInterface;
 use Magento\Framework\Locale\Resolver;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Quote\Model\Cart\CartTotalRepository;
 use Magento\Quote\Model\Quote;
@@ -22,76 +23,72 @@ use Mondu\Mondu\Helper\BuyerParams\BuyerParamsInterface;
 use Mondu\Mondu\Helper\OrderHelper;
 use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
-class Transactions extends CommonRequest implements RequestInterface
+class Transactions extends AbstractRequest implements RequestInterface
 {
     /**
      * @var CheckoutSession
      */
-    protected $_checkoutSession;
+    protected $checkoutSession;
 
     /**
      * @var CartTotalRepository
      */
-    protected $_cartTotalRepository;
-
-    /**
-     * @var MonduConfigProvider
-     */
-    private $configProvider;
-
-    /**
-     * @var Curl
-     */
-    protected $curl;
+    protected $cartTotalRepository;
 
     /**
      * @var string
      */
-    private $fallbackEmail;
+    protected $fallbackEmail;
 
     /**
      * @var OrderHelper
      */
-    private $orderHelper;
+    protected $orderHelper;
 
     /**
      * @var UrlInterface
      */
-    private $urlBuilder;
+    protected $urlBuilder;
 
     /**
      * @var BuyerParamsInterface
      */
-    private $buyerParams;
+    protected $buyerParams;
 
     /**
      * @var Resolver
      */
-    private $store;
+    protected $store;
 
     /**
-     * @param Curl $curl
+     * @param ClientInterface $curl
+     * @param SerializerInterface $serializer
+     * @param MonduConfigProvider $configProvider
      * @param CartTotalRepository $cartTotalRepository
      * @param CheckoutSession $checkoutSession
-     * @param MonduConfigProvider $configProvider
      * @param OrderHelper $orderHelper
      * @param UrlInterface $urlBuilder
      * @param BuyerParamsInterface $buyerParams
+     * @param Resolver $store
      */
     public function __construct(
-        Curl $curl,
+        ClientInterface $curl,
+        SerializerInterface $serializer,
+        MonduConfigProvider $configProvider,
         CartTotalRepository $cartTotalRepository,
         CheckoutSession $checkoutSession,
-        MonduConfigProvider $configProvider,
         OrderHelper $orderHelper,
         UrlInterface $urlBuilder,
         BuyerParamsInterface $buyerParams,
         Resolver $store
     ) {
-        $this->_checkoutSession = $checkoutSession;
-        $this->_cartTotalRepository = $cartTotalRepository;
-        $this->configProvider = $configProvider;
-        $this->curl = $curl;
+        parent::__construct(
+            $curl,
+            $serializer,
+            $configProvider
+        );
+        $this->checkoutSession = $checkoutSession;
+        $this->cartTotalRepository = $cartTotalRepository;
         $this->orderHelper = $orderHelper;
         $this->urlBuilder = $urlBuilder;
         $this->buyerParams = $buyerParams;
@@ -116,26 +113,26 @@ class Transactions extends CommonRequest implements RequestInterface
                 $params['payment_method'] = $_params['payment_method'];
             }
 
-            $params = json_encode($params);
+            $params = $this->serializer->serialize($params);
 
             $url = $this->configProvider->getApiUrl('orders');
 
             $this->curl->addHeader('X-Mondu-User-Agent', $_params['user-agent']);
 
             $result = $this->sendRequestWithParams('post', $url, $params);
-            $data = json_decode($result, true);
-            $this->_checkoutSession->setMonduid($data['order']['uuid'] ?? null);
+            $data = $this->serializer->unserialize($result);
+            $this->checkoutSession->setMonduid($data['order']['uuid'] ?? null);
 
             if (!isset($data['order']['uuid'])) {
                 return [
                     'error' => 1,
-                    'body' => json_decode($result, true),
+                    'body' => $this->serializer->unserialize($result),
                     'message' => __('Error placing an order Please try again later.')
                 ];
             } else {
                 return [
                     'error' => 0,
-                    'body' => json_decode($result, true),
+                    'body' => $this->serializer->unserialize($result),
                     'message' => __('Success')
                 ];
             }
@@ -157,10 +154,10 @@ class Transactions extends CommonRequest implements RequestInterface
      */
     protected function getRequestParams()
     {
-        $quote = $this->_checkoutSession->getQuote();
+        $quote = $this->checkoutSession->getQuote();
         $quote->collectTotals();
 
-        $quoteTotals = $this->_cartTotalRepository->get($quote->getId());
+        $quoteTotals = $this->cartTotalRepository->get($quote->getId());
 
         $discountAmount = $quoteTotals->getDiscountAmount();
 

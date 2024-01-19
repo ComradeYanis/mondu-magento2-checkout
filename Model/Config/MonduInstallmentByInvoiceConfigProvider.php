@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Mondu\Mondu\Model\Config;
 
-class MonduInstallmentInvoiceConfigProvider extends AbstractMonduConfigProvider
+class MonduInstallmentByInvoiceConfigProvider extends AbstractMonduConfigProvider
 {
     public const CODE = 'monduinstallmentbyinvoice';
 }

@@ -9,37 +9,12 @@ declare(strict_types=1);
 
 namespace Mondu\Mondu\Model\Request;
 
-use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Config\MonduConfigProvider;
-
-class ErrorEvents extends CommonRequest
+class ErrorEvents extends AbstractRequest
 {
-    /**
-     * @var Curl
-     */
-    protected $curl;
-
     /**
      * @var bool
      */
     protected $sendEvents = false;
-
-    /**
-     * @var MonduConfigProvider
-     */
-    private $configProvider;
-
-    /**
-     * @param Curl $curl
-     * @param MonduConfigProvider $configProvider
-     */
-    public function __construct(
-        Curl $curl,
-        MonduConfigProvider $configProvider
-    ) {
-        $this->configProvider = $configProvider;
-        $this->curl = $curl;
-    }
 
     /**
      * Request
@@ -50,9 +25,8 @@ class ErrorEvents extends CommonRequest
     public function request($params)
     {
         $url = $this->configProvider->getApiUrl('plugin/events');
+        $resultJson = $this->sendRequestWithParams('post', $url, $this->serializer->serialize($params));
 
-        $resultJson = $this->sendRequestWithParams('post', $url, json_encode($params));
-
-        return json_decode($resultJson);
+        return $this->serializer->unserialize($resultJson);
     }
 }

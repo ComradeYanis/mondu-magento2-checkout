@@ -102,14 +102,4 @@ class Save extends Action
 
         return $resultRedirect->setPath('*/*/');
     }
-
-    /**
-     * Authorization level of a basic admin session
-     *
-     * @return bool
-     */
-    protected function _isAllowed()
-    {
-        return $this->_authorization->isAllowed(static::ADMIN_RESOURCE);
-    }
 }

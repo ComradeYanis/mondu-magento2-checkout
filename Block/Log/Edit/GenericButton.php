@@ -66,15 +66,4 @@ class GenericButton implements ButtonProviderInterface
     {
         return [];
     }
-
-    /**
-     * Check permission for passed action
-     *
-     * @param string $resourceId
-     * @return bool
-     */
-    protected function _isAllowedAction($resourceId)
-    {
-        return $this->_authorization->isAllowed($resourceId);
-    }
 }

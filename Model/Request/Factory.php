@@ -92,7 +92,7 @@ class Factory
      * Create class using object manager
      *
      * @param mixed $method
-     * @return CommonRequest
+     * @return AbstractRequest
      * @throws LocalizedException
      */
     public function create($method)

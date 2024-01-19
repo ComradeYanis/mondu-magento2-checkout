@@ -7,37 +7,12 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Model\Request;
 
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
-class ConfirmOrder extends CommonRequest implements RequestInterface
+class ConfirmOrder extends AbstractRequest implements RequestInterface
 {
-    /**
-     * @var Curl
-     */
-    protected $curl;
-
-    /**
-     * @var MonduConfigProvider
-     */
-    protected $configProvider;
-
-    /**
-     * @param Curl $curl
-     * @param MonduConfigProvider $configProvider
-     */
-    public function __construct(
-        Curl $curl,
-        MonduConfigProvider $configProvider
-    ) {
-        $this->curl = $curl;
-        $this->configProvider = $configProvider;
-    }
-
     /**
      * @inheritDoc
      */
@@ -48,14 +23,14 @@ class ConfirmOrder extends CommonRequest implements RequestInterface
         $resultJson = $this->sendRequestWithParams(
             'post',
             $url,
-            json_encode(['external_reference_id' => $params['referenceId']])
+            $this->serializer->serialize(['external_reference_id' => $params['referenceId']])
         );
 
         if (!$resultJson) {
             throw new LocalizedException(__('Mondu: something went wrong'));
         }
 
-        $result = json_decode($resultJson, true);
+        $result = $this->serializer->unserialize($resultJson);
 
         if (isset($result['errors']) || isset($result['error'])) {
             throw new LocalizedException(__('Mondu: something went wrong'));

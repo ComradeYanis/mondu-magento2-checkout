@@ -9,33 +9,8 @@ declare(strict_types=1);
 
 namespace Mondu\Mondu\Model\Request;
 
-use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Config\MonduConfigProvider;
-
-class Cancel extends CommonRequest implements RequestInterface
+class Cancel extends AbstractRequest implements RequestInterface
 {
-    /**
-     * @var Curl
-     */
-    protected $curl;
-
-    /**
-     * @var MonduConfigProvider
-     */
-    private $configProvider;
-
-    /**
-     * @param Curl $curl
-     * @param MonduConfigProvider $configProvider
-     */
-    public function __construct(
-        Curl $curl,
-        MonduConfigProvider $configProvider
-    ) {
-        $this->configProvider = $configProvider;
-        $this->curl = $curl;
-    }
-
     /**
      * @inheritdoc
      */
@@ -44,10 +19,10 @@ class Cancel extends CommonRequest implements RequestInterface
         $url = $this->configProvider->getApiUrl('orders').'/'.$params['orderUid'].'/cancel';
 
         unset($params['orderUid']);
-        $resultJson = $this->sendRequestWithParams('post', $url, json_encode([]));
+        $resultJson = $this->sendRequestWithParams('post', $url, $this->serializer->serialize([]));
 
         if ($resultJson) {
-            $result = json_decode($resultJson, true);
+            $result = $this->serializer->unserialize($resultJson);
         }
 
         return $result ?? null;

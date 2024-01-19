@@ -7,19 +7,16 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Model\Request;
 
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\HTTP\ClientInterface;
+use Magento\Framework\Serialize\SerializerInterface;
+use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
-abstract class CommonRequest implements RequestInterface
+abstract class AbstractRequest implements RequestInterface
 {
-    /**
-     * @var Curl
-     */
-    protected $curl;
 
     /**
      * @var mixed
@@ -45,6 +42,33 @@ abstract class CommonRequest implements RequestInterface
      * @var RequestInterface
      */
     protected $errorEventsHandler;
+    /**
+     * @var ClientInterface
+     */
+    protected $curl;
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+    /**
+     * @var MonduConfigProvider
+     */
+    protected $configProvider;
+
+    /**
+     * @param ClientInterface $curl
+     * @param SerializerInterface $serializer
+     * @param MonduConfigProvider $configProvider
+     */
+    public function __construct(
+        ClientInterface $curl,
+        SerializerInterface $serializer,
+        MonduConfigProvider $configProvider
+    ) {
+        $this->curl = $curl;
+        $this->serializer = $serializer;
+        $this->configProvider = $configProvider;
+    }
 
     /**
      * Method that sends the request to api
@@ -89,7 +113,7 @@ abstract class CommonRequest implements RequestInterface
      * @param array $headers
      * @return $this
      */
-    public function setCommonHeaders($headers): CommonRequest
+    public function setCommonHeaders($headers): AbstractRequest
     {
         $this->curl->setHeaders($headers);
         return $this;
@@ -101,7 +125,7 @@ abstract class CommonRequest implements RequestInterface
      * @param array $environment
      * @return $this
      */
-    public function setEnvironmentInformation($environment): CommonRequest
+    public function setEnvironmentInformation($environment): AbstractRequest
     {
         if (!isset($this->envInformation)) {
             $this->envInformation = $environment;
@@ -135,8 +159,8 @@ abstract class CommonRequest implements RequestInterface
         if ($statusFirstDigit !== '1' && $statusFirstDigit !== '2') {
             $curlData = [
                 'response_status' => (string) $this->curl->getStatus(),
-                'response_body' => json_decode($this->curl->getBody(), true) ?? [],
-                'request_body' => json_decode($this->requestParams ?? '', true) ?? [],
+                'response_body' => $this->serializer->unserialize($this->curl->getBody()) ?? [],
+                'request_body' => $this->serializer->unserialize($this->requestParams ?? '') ?? [],
                 'origin_event' => $this->requestOrigin
             ];
 
@@ -149,7 +173,7 @@ abstract class CommonRequest implements RequestInterface
                 ]);
             } else {
                 $data = array_merge($data, [
-                    'error_trace' => json_encode(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS))
+                    'error_trace' => $this->serializer->unserialize(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS))
                 ]);
             }
 

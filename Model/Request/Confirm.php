@@ -7,41 +7,18 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Model\Request;
 
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
-class Confirm extends CommonRequest
+class Confirm extends AbstractRequest
 {
     public const ORDER_STATE = ['pending', 'confirmed', 'authorized'];
 
     /**
-     * @var Curl
-     */
-    protected $curl;
-    /**
-     * @var MonduConfigProvider
-     */
-    private $configProvider;
-    /**
      * @var bool
      */
     private $validate = true;
-
-    /**
-     * @param Curl $curl
-     * @param MonduConfigProvider $configProvider
-     */
-    public function __construct(
-        Curl $curl,
-        MonduConfigProvider $configProvider
-    ) {
-        $this->configProvider = $configProvider;
-        $this->curl = $curl;
-    }
 
     /**
      * Request
@@ -58,7 +35,7 @@ class Confirm extends CommonRequest
 
         $url = $this->configProvider->getApiUrl('orders').'/'.$params['orderUid'];
         $resultJson = $this->sendRequestWithParams('get', $url);
-        $result = json_decode($resultJson, true);
+        $result = $this->serializer->unserialize($resultJson);
 
         if ($this->validate && !in_array($result['order']['state'] ?? null, self::ORDER_STATE)) {
             throw new LocalizedException(__('Error placing an order'));

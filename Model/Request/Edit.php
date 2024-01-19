@@ -7,41 +7,16 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Model\Request;
 
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Config\MonduConfigProvider;
 
-class Edit extends CommonRequest
+class Edit extends AbstractRequest
 {
-    /**
-     * @var Curl
-     */
-    protected $curl;
-
-    /**
-     * @var MonduConfigProvider
-     */
-    protected $configProvider;
-
     /**
      * @var string
      */
     protected $uid;
-
-    /**
-     * @param Curl $curl
-     * @param MonduConfigProvider $configProvider
-     */
-    public function __construct(
-        Curl $curl,
-        MonduConfigProvider $configProvider
-    ) {
-        $this->configProvider = $configProvider;
-        $this->curl = $curl;
-    }
 
     /**
      * Request
@@ -57,13 +32,13 @@ class Edit extends CommonRequest
         }
 
         $url = $this->configProvider->getApiUrl('orders') . '/' . $this->uid . '/adjust';
-        $resultJson = $this->sendRequestWithParams('post', $url, json_encode($params));
+        $resultJson = $this->sendRequestWithParams('post', $url, $this->serializer->serialize($params));
 
         if (!$resultJson) {
             throw new LocalizedException(__('Mondu: something went wrong'));
         }
 
-        return json_decode($resultJson, true);
+        return $this->serializer->unserialize($resultJson);
     }
 
     /**

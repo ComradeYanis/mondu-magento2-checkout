@@ -9,37 +9,12 @@ declare(strict_types=1);
 
 namespace Mondu\Mondu\Model\Request;
 
-use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Config\MonduConfigProvider;
-
-class Webhooks extends CommonRequest implements RequestInterface
+class Webhooks extends AbstractRequest implements RequestInterface
 {
     /**
      * @var string
      */
     protected $topic;
-
-    /**
-     * @var Curl
-     */
-    protected $curl;
-
-    /**
-     * @var MonduConfigProvider
-     */
-    protected $configProvider;
-
-    /**
-     * @param Curl $curl
-     * @param MonduConfigProvider $configProvider
-     */
-    public function __construct(
-        Curl $curl,
-        MonduConfigProvider $configProvider
-    ) {
-        $this->curl = $curl;
-        $this->configProvider = $configProvider;
-    }
 
     /**
      * Request
@@ -51,7 +26,7 @@ class Webhooks extends CommonRequest implements RequestInterface
     {
         $url = $this->configProvider->getApiUrl('webhooks');
 
-        $this->sendRequestWithParams('post', $url, json_encode([
+        $this->sendRequestWithParams('post', $url, $this->serializer->serialize([
             'address' => $this->configProvider->getWebhookUrl(),
             'topic' => $this->getTopic()
         ]));

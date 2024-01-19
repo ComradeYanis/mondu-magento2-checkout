@@ -7,27 +7,14 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Model\Request\Webhooks;
 
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\Client\Curl;
-use Mondu\Mondu\Model\Config\MonduConfigProvider;
-use Mondu\Mondu\Model\Request\CommonRequest;
+use Mondu\Mondu\Model\Request\AbstractRequest;
 use Mondu\Mondu\Model\Request\RequestInterface;
 
-class Keys extends CommonRequest implements RequestInterface
+class Keys extends AbstractRequest implements RequestInterface
 {
-    /**
-     * @var Curl
-     */
-    protected $curl;
-
-    /**
-     * @var MonduConfigProvider
-     */
-    protected $configProvider;
-
     /**
      * @var int
      */
@@ -44,18 +31,6 @@ class Keys extends CommonRequest implements RequestInterface
     protected $responseStatus;
 
     /**
-     * @param Curl $curl
-     * @param MonduConfigProvider $configProvider
-     */
-    public function __construct(
-        Curl $curl,
-        MonduConfigProvider $configProvider
-    ) {
-        $this->curl = $curl;
-        $this->configProvider = $configProvider;
-    }
-
-    /**
      * Request
      *
      * @param array|null $params
@@ -67,7 +42,7 @@ class Keys extends CommonRequest implements RequestInterface
         $resultJson = $this->sendRequestWithParams('get', $url);
 
         if ($resultJson) {
-            $result = json_decode($resultJson, true);
+            $result = $this->serializer->unserialize($resultJson);
         }
 
         $this->webhookSecret = $result['webhook_secret'] ?? null;

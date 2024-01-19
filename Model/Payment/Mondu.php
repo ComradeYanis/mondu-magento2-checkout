@@ -7,7 +7,6 @@
 
 declare(strict_types=1);
 
-
 namespace Mondu\Mondu\Model\Payment;
 
 use Magento\Payment\Model\InfoInterface;
